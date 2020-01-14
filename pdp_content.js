@@ -12,15 +12,15 @@ async function check_internal_api(){
 
 // =====================  check internal api ===================
 
-var API_ENDPOINTz = ['https://sunxjd.serveo.net/JDC-Price-Tracking/api/fetch.php?', 'https://sunxjd.serveo.net/JDC-Price-Tracking/api/fetch_pv.php?'];
+var API_ENDPOINT = [];
 
     try{
       var local_api_response = await fetch('http://10.152.193.112/BatchUpload/api/status.php');
       var local_api_json = await local_api_response.json();
       // console.log(json);
-      console.log('sun')
+      console.log('pass')
       if (local_api_json.status == 200) {
-        API_ENDPOINTz = ['https://10.152.193.112/JDC-Price-Tracking/api/fetch.php?', 'https://10.152.193.112/JDC-Price-Tracking/api/fetch_pv.php?'];
+        API_ENDPOINT = ['https://10.152.193.112/JDC-Price-Tracking/api/fetch.php?', 'https://10.152.193.112/JDC-Price-Tracking/api/fetch_pv.php?'];
 
       }
 
@@ -28,7 +28,7 @@ var API_ENDPOINTz = ['https://sunxjd.serveo.net/JDC-Price-Tracking/api/fetch.php
   
     }
 
-    return API_ENDPOINTz;
+    return API_ENDPOINT;
 
     // =====================  end check internal api ===================
   }
@@ -74,123 +74,6 @@ url = window.location.href;
       url = url
     }
 
-  // =======================================
-  
-  function add_cate_brand(){
-      //updated Oct15,2019 //18.56
-      
-      var addbrandButton = document.createElement('a');
-          addbrandButton.id = 'prdaddbrand';
-          addbrandButton.style.cssFloat = "right";
-          addbrandButton.className = 'btn-c4 btn-h2 mr10'
-          addbrandButton.innerText = 'ADD BRANDS'
-          MainBody = document.getElementsByClassName('sub-tit')[0];
-          MainBody.appendChild(addbrandButton);
-      
-      var addcateButton = document.createElement('a');
-          addcateButton.id = 'prdaddcate';
-          addcateButton.style.cssFloat = "right";
-          addcateButton.className = 'btn-c4 btn-h2 mr10'
-          addcateButton.innerText = 'ADD THIRD CATEORIES'
-          MainBody = document.getElementsByClassName('sub-tit')[0];
-          MainBody.appendChild(addcateButton);
-      
-      }
-      
-      function addbrand(vendorid,brandid) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-          if (this.readyState == 4 && this.status == 200) {
-            console.log(this.responseText);
-          }
-        };
-        xhttp.open("POST", "http://seller-i.jd.co.th/venderBrand/addVenderBrand", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("venderId="+vendorid+"&erpBrandId="+brandid);
-      }
-        
-      function prddoaddbrand(){
-          var textArea = prompt("Please enter Brand IDs", "");
-          
-          var vendorid = prompt("Please enter Vendor ID", "");
-          
-          textArea = textArea.replace(/\n/g, "^");
-
-          let all_arrayOfLines = textArea.split("^");
-
-          let unique_brand_id = new Set(all_arrayOfLines);
-          let arrayOfLines = [...unique_brand_id]
-          
-          for (let i = arrayOfLines.length - 1; i >= 0; i--) {
-            // console.log(arrayOfLines[i])
-            try{
-              brand_id = arrayOfLines[i].match(/(?<=\[).+?(?=\])/i)[0]
-            }catch{
-              brand_id = arrayOfLines[i]
-            }
-            addbrand(vendorid,brand_id)
-          }
-          alert(arrayOfLines.length + ' brand(s) added');
-      }
-      
-      function addcate(vendorid,catedid) {
-        console.log("category3IdStr="+catedid+"&rateType=1&venderId="+vendorid)
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-          if (this.readyState == 4 && this.status == 200) {
-            console.log(this.responseText);
-          }
-        };
-        xhttp.open("POST", "http://seller-i.jd.co.th/venderCategory/doAddCategory", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-        xhttp.setRequestHeader("Accept", "text/plain, */*; q=0.01");
-        xhttp.send("category3IdStr="+catedid+"&rateType=1&venderId="+vendorid);
-      }
-      
-      function prddoaddcate(){
-      var textArea = prompt("Please enter Third Category IDs", "");
-      
-      var vendorid = prompt("Please enter Vendor ID", "");
-      
-      var thirdcateid = textArea.replace(/\n/g, "^");
-
-      let all_cate_arrayOfLines = thirdcateid.split("^");
-      
-      let unique_cate_id = new Set(all_cate_arrayOfLines);
-      let cate_arrayOfLines = [...unique_cate_id]
-
-
-
-
-      let all_cate = []
-          
-          for (let ix = cate_arrayOfLines.length - 1; ix >= 0; ix--) {
-            // console.log(arrayOfLines[i])
-            try{
-              cate_id = cate_arrayOfLines[ix].match(/(?<=\[).+?(?=\])/i)[0]
-            }catch{
-              try{
-                cate_id = parseInt(cate_arrayOfLines[ix], 10)
-              }catch{
-                cate_id = 'NaN'
-              }
-            }
-            if(cate_id.toString() != 'NaN'){
-            all_cate.push(cate_id)
-            }
-          }
-      thirdcateid = all_cate.join()
-      console.log(thirdcateid)
-      addcate(vendorid,thirdcateid)
-      alert('Categories added');
-      }
-      
-      try{
-      document.getElementById("prdaddbrand").addEventListener("click", prddoaddbrand);
-      document.getElementById("prdaddcate").addEventListener("click", prddoaddcate);
-      }catch{}
-
       
       // =======================================
 
@@ -229,17 +112,12 @@ function loadchartjs(jsondata,max_unit,chartzoomoption){
     return e.price['max'];
     });
   
-    // var data3 = jsonfile['price_after_coupon'].map(function(e) {
-    //   return e.price;
-    // });
     
     
     
     var ctx = document.getElementById('canvas').getContext('2d');
     
     var gradient = ctx.createLinearGradient(0, 0, 0, 400);
-      // gradient.addColorStop(0, 'rgba(250,174,50,1)');   
-      // gradient.addColorStop(1, 'rgba(250,174,50,0)');
       gradient.addColorStop(0, 'rgba(255,50,50,0.9)');   
       gradient.addColorStop(1, 'rgba(255,255,255,0)');
     
@@ -254,7 +132,6 @@ function loadchartjs(jsondata,max_unit,chartzoomoption){
         steppedLine: 'before',
         label: 'Price Before Coupon (min)',
         data: data_price_bf_min,
-        // backgroundColor: 'rgba(0, 119, 204, 0.3)'
         backgroundColor: 'rgba(0, 119, 204, 0)',
         borderWidth: 2.5,
         borderColor: '#007bff',
@@ -267,7 +144,6 @@ function loadchartjs(jsondata,max_unit,chartzoomoption){
       steppedLine: 'before',
       label: 'Price Before Coupon (max)',
       data: data_price_bf_max,
-      // backgroundColor: 'rgba(0, 119, 204, 0.3)'
       backgroundColor: 'rgba(0, 119, 204, 0)',
       borderColor: "#1200ff",
       borderWidth: 2.5,
@@ -280,7 +156,6 @@ function loadchartjs(jsondata,max_unit,chartzoomoption){
     steppedLine: 'before',
     label: 'Price After Coupon (min)',
     data: data_price_aft_min,
-    // backgroundColor: 'rgba(0, 119, 204, 0.3)'
     backgroundColor: 'rgba(0, 119, 204, 0)',
     borderColor: "#ff4900",
     borderWidth: 2,
@@ -293,7 +168,6 @@ function loadchartjs(jsondata,max_unit,chartzoomoption){
     steppedLine: 'before',
     label: 'Price After Coupon (max)',
     data: data_price_aft_max,
-    // backgroundColor: 'rgba(0, 119, 204, 0.3)'
     backgroundColor: 'rgba(0, 119, 204, 0)',
     borderColor: "#ff0000",
     borderWidth: 2,
@@ -306,7 +180,6 @@ function loadchartjs(jsondata,max_unit,chartzoomoption){
     label: 'Unit',
     data: data_unit,
     yAxisID: 'B',
-    // backgroundColor: 'rgba(0, 119, 204, 0.3)'
     backgroundColor : '#ffd5d3',
     borderWidth: 1.5,
     borderColor: '#ffd5d3',
@@ -362,17 +235,12 @@ function loadchartjs(jsondata,max_unit,chartzoomoption){
         }]
       },
       pan: {
-        // Boolean to enable panning
         enabled: chartzoomoption,
   
-        // Panning directions. Remove the appropriate direction to disable 
-        // Eg. 'y' would only allow panning in the y direction
         mode: 'xy'
     },
   
-    // Container for zoom options
     zoom: {
-        // Boolean to enable zooming
         enabled: chartzoomoption,
         mode: 'xy',
     }
@@ -445,13 +313,6 @@ function loadchartjs(jsondata,max_unit,chartzoomoption){
       return e.lost_pv;
       });
       
-      // var data_price_aft_max = jsonfile['price_after_coupon'].map(function(e) {
-      // return e.price['max'];
-      // });
-    
-      // var data3 = jsonfile['price_after_coupon'].map(function(e) {
-      //   return e.price;
-      // });
       
       
       
@@ -578,21 +439,14 @@ function loadchartjs(jsondata,max_unit,chartzoomoption){
           }]
         },
         pan: {
-          // Boolean to enable panning
           enabled: chartzoomoption,
     
-          // Panning directions. Remove the appropriate direction to disable 
-          // Eg. 'y' would only allow panning in the y direction
           mode: 'x'
       },
     
-      // Container for zoom options
       zoom: {
-          // Boolean to enable zooming
           enabled: chartzoomoption,
     
-          // Zooming directions. Remove the appropriate direction to disable 
-          // Eg. 'y' would only allow zooming in the y direction
           mode: 'x',
       }
     
@@ -884,15 +738,15 @@ function loadchart(dataurl){
     }
     
     // console.log('loading endpoint').then(() => API_ENDPOINTz = check_internal_api());
-    API_ENDPOINTz = ['https://10.152.193.112/JDC-Price-Tracking/api/fetch.php?', 'https://10.152.193.112/JDC-Price-Tracking/api/fetch_pv.php?'];
+    API_ENDPOINT = ['https://10.152.193.112/JDC-Price-Tracking/api/fetch.php?', 'https://10.152.193.112/JDC-Price-Tracking/api/fetch_pv.php?'];
 
     var data_ready_state = [];
   
-  for (var i = 0; i < API_ENDPOINTz.length; i++) {
+  for (var i = 0; i < API_ENDPOINT.length; i++) {
   
       console.log(dataurl)
       console.log(i)
-      var url = API_ENDPOINTz[i] + dataurl;
+      var url = API_ENDPOINT[i] + dataurl;
       console.log(url)
   
       let request = new XMLHttpRequest();
@@ -1016,7 +870,6 @@ function loadchart(dataurl){
     {
       /* This event will be triggered before date range picker open animation */
       try{
-    //   document.getElementsByClassName('chart')[0].style.display = 'none';
         document.getElementById("canvas").style.display = 'none';
       document.getElementById("canvas2").className = "blur";
       } catch (e) {
@@ -1080,43 +933,11 @@ function loadchart(dataurl){
       chart_div2.appendChild(canv2);
       
   
-  // chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
-  //   url = tabs[0].url;
-  //   // https://item.jd.co.th/3132972.html
-  //   if(url.includes('//item.jd.co.th/')){
-  //     console.log('special detected')
-  //     url = url.replace('//item.jd.co.th/','//item.jd.co.th/_')
-  //   }
-  //   console.log(url)
-  //   url = url.split("_");
-  //   url = url[url.length - 1];
-  //   url = url.split(".html");
-  //   url = url[0];
-  //   console.log(url)
-  
-  //   // var G2 = document.getElementById("canvas2").getContext("2d");
-  //   // new Chart(G2).Bar(barChartData2, {
-  //   //     responsive: true
-  //   // })
-    
-  // });
-  // console.log(url_tab[0])
       loadchart('sku='+url_tab[0]);
     });
   
-    // range_Custom.addEventListener('click', function() {
-     
-    // });
   });
   
-  
-  // var ctx = document.getElementById('canvas').getContext('2d');
-  // 				var config = barChartData2;
-  //         new Chart(ctx, config);
-  
-  //         var ctx2 = document.getElementById('canvas2').getContext('2d');
-  // 				var config = barChartData2;
-  // 				new Chart(ctx2, config);
   
   
   
