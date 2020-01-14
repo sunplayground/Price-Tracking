@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> JD Central Price History Extension</title>
+  </head>
+<style>
+  body {
+            width: 470px;
+            height: 520px;
+            overflow: hidden;
+            margin-bottom: 20px;
+         }
+         .lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+.data-content{
+  padding-bottom: 10px;
+  font-size: 1.2em;
+}
+.lds-ellipsis div {
+  position: absolute;
+  top: 27px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: rgb(255, 146, 146);
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.lds-ellipsis div:nth-child(1) {
+  left: 6px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 6px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 26px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 45px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(19px, 0);
+  }
+}
+
+.data-content span{
+  font-size: 0.8em;
+}
+.button {
+    display: inline-block;
+    vertical-align: middle;
+    /* margin: 0; */
+    margin-right: -4px;
+    font-family: inherit;
+    padding: 0.2em 0.4em;
+    -webkit-appearance: none;
+    border: 1px solid transparent;
+    border-radius: 0;
+    -webkit-transition: background-color 0.25s ease-out, color 0.25s ease-out;
+    transition: background-color 0.25s ease-out, color 0.25s ease-out;
+    font-size: 0.7rem;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    background-color: #eb2334;
+    color: #fefefe;
+}
+.button-group input {
+  display: none;
+}
+
+.button-group input:checked + label,
+.button-group input:checked + label:active {
+  background-color: salmon;
+}
+.text_overlay{
+  padding-top: 20px;
+  font-size: 2em;
+  color: salmon;
+}
+#date_range {
+  margin-left: 20px;
+}
+.blur{
+  -webkit-transition : -webkit-filter 200ms linear;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+    -webkit-filter: blur(4px);
+    -moz-filter: blur(4px);
+    -ms-filter: blur(4px);
+    -o-filter: blur(4px);
+    filter: blur(4px);
+
+}
+.top_header {
+  display: inline;
+}
+input#switch[type=checkbox]{
+	height: 0;
+	width: 0;
+	visibility: hidden;
+}
+
+label.toggle_switch {
+	cursor: pointer;
+	text-indent: -9999px;
+	width: 35px;
+	height: 17px;
+	background: grey;
+	display: block;
+	border-radius: 25px;
+	position: relative;
+}
+
+label.toggle_switch:after {
+	content: '';
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	width: 15px;
+	height: 15px;
+	background: #fff;
+	border-radius: 15px;
+	transition: 0.3s;
+}
+
+input#switch:checked + label.toggle_switch {
+	background: #87da54;
+}
+
+input#switch:checked + label.toggle_switch:after {
+	left: calc(100% - 1px);
+	transform: translateX(-100%);
+}
+
+label.toggle_switch:active:after {
+	width: 22px;
+}
+.zoom_label {
+  margin-left: 100px;
+}
+#header {
+font-size: 2em;
+
+}
+.zoom_pane {
+  text-align: right;
+  display: inline-flex;
+  float: right;
+  margin-top: 8px;
+}
+  </style>
+  <body>
+    
+    <div class="top_header"><span id="header">JDC Price Tracking</span><div class="zoom_pane"><span class="zoom_label">Zoom Enable: </span><input type="checkbox" id="switch" /><label class="toggle_switch" for="switch"></label></div></div></center>
+    <span id='url' style='display:none'></span>
+    <center>
+
+      <div class="preload_div">
+      </div>
+      <div class="chartcontent">
+    <div class="lds-ellipsis">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <span class ="text_overlay"></span>
+      </div>
+    </center>
+    <script src="Chart.min.js"></script>
+
+    <script src="hammerjs-2.0.8.js"></script>
+    <script src="chartjs-plugin-zoom-0.7.3.js"></script>
+
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="moment.min.js"></script>
+    <script type="text/javascript" src="jquery.daterangepicker.min.js"></script>
+    <link rel="stylesheet" href="daterangepicker.css">
+
+    <div class="chart">
+    <canvas id="canvas"></canvas>
+    </div>
+
+
+    <div class="chart-pv">
+        <canvas id="canvas2"></canvas>
+        </div>
+    <div class="data-content">
+      <span>Range</span><br>
+      <div style="display:inline-flex;">
+        <div class="button-group round toggle">
+            <input type="radio" id='range_all' name="r-group" checked="checked">
+            <label class="button" for="range_all">All</label>
+            <input type="radio" id='range_Custom' name="r-group">
+            <label class="button" for="range_Custom" id="custom_btn">Custom range:</label>
+          </div>
+          <input name="date_range" id="date_range" type="text" disabled>
+</div>
+          
+
+
+<br>
+    <b><span>Last price: </span> <span id="lastprice"></span></b><br>
+    <span>Highest price: </span> <span id="highprice"></span><br>
+    <span>Lowest price: </span> <span id="lowprice"></span><br>
+    </div>
+  </body>
+  <script src="index.js"></script>
+  
+</html>

@@ -1,0 +1,33 @@
+{
+  "name": "JDC Price History",
+  "description" : "Displaying price history, conversion, PV, UV lost PV of JD.CO.TH Products",
+  "permissions": ["activeTab", "declarativeContent", "storage", "tabs"],
+  "version": "1.5",
+  "icons": {                   
+    "19": "JDC_Price_extensions.png",
+    "38": "JDC_Price_extensions.png",
+    "48": "JDC_Price_extensions.png",
+    "128": "JDC_Price_extensions.png"
+  }, 
+  "content_scripts": [{
+    "matches" :         [
+      "*://jd.co.th/*",
+      "*://*.jd.co.th/*"
+  ],
+    "all_frames": true,
+    "css": ["styles.css","daterangepicker.css"],
+    "js":  ["moment.min.js","Chart.min.js","hammerjs-2.0.8.js","chartjs-plugin-zoom-0.7.3.js","jquery.min.js","moment.min.js","jquery.daterangepicker.min.js","pdp_content.js"]
+}],
+"content_security_policy": "script-src 'self' https://www.gstatic.com/; object-src 'self'",
+
+  "manifest_version": 2,
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "MacCtrl+Shift+F"
+      },
+      "description": "Show price history of 1P JD.CO.TH Product"
+    }
+  }
+}
